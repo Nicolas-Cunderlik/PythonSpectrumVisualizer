@@ -1,0 +1,9 @@
+This file is my high-level understanding of what I need to do in order to implement a simple spectrum visualizer, my thoughts as I iterate, etc.
+
+Initially:
+Step 1: Collect audio samples. Probably 512 @ 48k Hz
+Step 2: We need to apply or create some kind of "window" so that each bin is smoothed at the edges
+    - There are a few windows to choose from, most notably Hann (most popular, good tradeoff between frequency resolution and reduced spectral leakage)
+Step 3: Once we applied the window, we can run a FFT which is a way of finding the DFT in O(nlogn) time rather than O(n^2)
+Step 4: Now we have the FFT, need to map it. Will probably need to map bin magnitudes to a log freq graph
+Step 5: Make it update frequently?
