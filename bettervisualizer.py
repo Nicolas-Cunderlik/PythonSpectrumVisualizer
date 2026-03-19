@@ -91,6 +91,8 @@ plt.ion()
 plt.rcParams['toolbar'] = 'none' # Just for aesthetics
 plt.style.use('dark_background')
 fig, ax = plt.subplots()
+fig.set_figwidth(10)
+fig.set_figheight(6)
 fig.canvas.manager.set_window_title("Spectrum Visualizer")
 line, = ax.plot(freqs, np.zeros_like(freqs))
 ax.set_xlabel("Freq (Hz)")
