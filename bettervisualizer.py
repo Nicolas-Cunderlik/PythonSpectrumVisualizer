@@ -107,7 +107,7 @@ while playback_index < audio_len:
     db = fft_chunks[chunk_idx]
     tilt = 3.0 * np.log2(np.maximum(freqs, 1e-6, None) / 1000) # 3dB/oct slope 
     db = db + tilt
-    db = smooth_spectrum(db, 15) # 15 is a lucky little number for smoothing
+    db = smooth_spectrum(db, 7) # 7 is a lucky little number for smoothing
     line.set_ydata(db)
 
     fig.canvas.draw_idle()
