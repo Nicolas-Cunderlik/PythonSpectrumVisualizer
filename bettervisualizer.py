@@ -63,7 +63,7 @@ def audio_callback(outdata, frames, _timeinfo, _status):
         chunk = np.zeros((frames,), dtype=audio.dtype)
         remaining = audio_len - playback_index
         if remaining > 0:
-            chunk[:remaining] = audio[playback_index:audio_len]
+            chunk[:remaining] = audio[playback_index:]
     else:
         chunk = audio[playback_index:end_idx]
     outdata[:] = chunk.reshape(-1,1)
@@ -91,6 +91,7 @@ plt.ion()
 plt.rcParams['toolbar'] = 'none' # Just for aesthetics
 plt.style.use('dark_background')
 fig, ax = plt.subplots()
+fig.canvas.manager.set_window_title("Spectrum Visualizer")
 line, = ax.plot(freqs, np.zeros_like(freqs))
 ax.set_xlabel("Freq (Hz)")
 ax.set_ylabel("dB")
@@ -105,7 +106,7 @@ while playback_index < audio_len:
 
     # There needs to be an upward tilt to the right to match human perception
     db = fft_chunks[chunk_idx]
-    tilt = 3.0 * np.log2(np.maximum(freqs, 1e-6, None) / 1000) # 3dB/oct slope 
+    tilt = 3.0 * np.log2(np.maximum(freqs, 1e-6) / 1000) # 3dB/oct slope 
     db = db + tilt
     db = smooth_spectrum(db, 7) # 7 is a lucky little number for smoothing
     line.set_ydata(db)
