@@ -11,6 +11,8 @@
 # This script still does not allow for real-time audio input, which I will probably
 # just have to do in C++ to avoid the additional setup.
 
+# I think the very high and low frequencies look a bit odd but I'd probaby need to use cut filters to fix it
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sounddevice as sd
@@ -76,6 +78,13 @@ stream = sd.OutputStream(
 stream.start()
 
 # ==============================================================================
+# We need to visually smooth the spectrum to avoid the spikiness
+# ==============================================================================
+def smooth_spectrum(db, window_size=7):
+    kernel = np.ones(window_size) / window_size
+    return np.convolve(db, kernel, mode='same')
+
+# ==============================================================================
 # Plot the visualizer
 # ==============================================================================
 plt.ion()
@@ -87,14 +96,20 @@ ax.set_xlabel("Freq (Hz)")
 ax.set_ylabel("dB")
 ax.set_xscale("log")
 ax.set_xlim(20, 20000)
-ax.set_ylim(-40, 60)
+ax.set_ylim(-50, 70)
 
 while playback_index < audio_len:
     chunk_idx = playback_index // BUFFER_SIZE
     if chunk_idx >= len(fft_chunks):
         break
 
-    line.set_ydata(fft_chunks[chunk_idx])
+    # There needs to be an upward tilt to the right to match human perception
+    db = fft_chunks[chunk_idx]
+    tilt = 3.0 * np.log2(np.maximum(freqs, 1e-6, None) / 1000) # 3dB/oct slope 
+    db = db + tilt
+    db = smooth_spectrum(db, 15) # 15 is a lucky little number for smoothing
+    line.set_ydata(db)
+
     fig.canvas.draw_idle()
     plt.pause(0.001)
 
