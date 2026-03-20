@@ -7,3 +7,14 @@ Step 2: We need to apply or create some kind of "window" so that each bin is smo
 Step 3: Once we applied the window, we can run a FFT which is a way of finding the DFT in O(nlogn) time rather than O(n^2)
 Step 4: Now we have the FFT, need to map it. Will probably need to map bin magnitudes to a log freq graph
 Step 5: Make it update frequently?
+
+Other notes:
+- It turns out that what I did was like simulating STFT, because I did processing per-buffer. STFT also runs on small chunks, but I'm assuming that it's a better method.
+
+Next: for key/pitch detection:
+Step 1: Need FFT, why? To map amplitude/energy to frequency domain so we know what freq is the most dominant (i.e. the key/note being played)
+Step 2: STFT for this mapping per-buffer or per some x buffers if per-buffer cannot be done real-time
+Step 3: Somehow measure the energy in each frequency/note band to then determine the most likely note/key being played --- chroma features
+    - Chroma appears to take frequencies and map them to 12 bins. Question: does each bin aggregate all octaves of that note? Answer: as suspected, it aggregates
+Step 4: Harmonic vs percussive separation?
+ 
